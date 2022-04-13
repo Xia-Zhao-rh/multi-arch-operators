@@ -1,0 +1,6 @@
+apiVersion: cache.example.com/v1alpha1
+kind: Nginx24644
+metadata:
+  name: nginx24644-sample
+spec:
+  size: 1

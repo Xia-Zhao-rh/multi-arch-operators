@@ -1,0 +1,38 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+  name: nginx-operator-24644.v0.0.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions: {}
+  description: nginx-operator-24644
+  displayName: nginx-operator-24644
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - nginx-operator-24644
+  links:
+  - name: Nginx Operator 24644
+    url: https://nginx-operator-24644.domain
+  maturity: alpha
+  provider:
+    name: nginx-operator-24644
+  version: 0.0.0
