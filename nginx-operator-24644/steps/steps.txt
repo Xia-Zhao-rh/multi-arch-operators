@@ -1,13 +1,15 @@
+1) init operator
 zhaoxia@xzha-mac nginx-operator-24644 % operator-sdk init --plugins=ansible --domain example.com
 
 Writing kustomize manifests for you to edit...
 Next: define a resource with:
 $ operator-sdk create api
 
-
+2) create api
 zhaoxia@xzha-mac nginx-operator-24644 % operator-sdk create api --group cache --version v1alpha1 --kind Nginx24644 --generate-role
 Writing kustomize manifests for you to edit..
 
+3) modify main.yml
 zhaoxia@xzha-mac nginx-operator-24644 % cat roles/nginx24644/defaults/main.yml
 ---
 # defaults file for Memcached
@@ -38,16 +40,10 @@ zhaoxia@xzha-mac nginx-operator-24644 % cat roles/nginx24644/tasks/main.yml
               image: "quay.io/openshifttest/nginx-alpine:multiarch"
 
 
-zhaoxia@xzha-mac nginx-operator-24644 % cat config/samples/cache_v1alpha1_nginx24644.yaml 
-apiVersion: cache.example.com/v1alpha1
-kind: Nginx24644
-metadata:
-  name: nginx24644-sample
-spec:
-  size: 1
-
+4) build nginx operator image
 zhaoxia@xzha-mac nginx-operator-24644 % docker buildx build . --push --platform linux/amd64,linux/arm64 --tag quay.io/olmqe/nginx-operator-base:v24644
 
+5) create bundle
 zhaoxia@xzha-mac nginx-operator-24644 % make bundle IMG=quay.io/olmqe/nginx-operator-base:v24644
 operator-sdk generate kustomize manifests -q
 
@@ -87,10 +83,10 @@ zhaoxia@xzha-mac nginx-operator-24644 % vi bundle/manifests/nginx-operator-24644
   - supported: true
     type: AllNamespaces
 
+6) create bundle image
 zhaoxia@xzha-mac nginx-operator-24644 % docker buildx build . --push --platform linux/amd64,linux/arm64 -f bundle.Dockerfile -t quay.io/olmqe/nginx-operator-bundle-24644:v1.0 
 
-
-
+7) create index image
 mkdir catalog
 opm generate dockerfile catalog
 mkdir catalog/nginx-operator-24644
@@ -113,7 +109,7 @@ name: nginx-operator-24644.v0.0.1
 
 zhaoxia@xzha-mac multi-arch-operators % docker buildx build . --push --platform linux/amd64,linux/arm64 -f catalog.Dockerfile -t quay.io/olmqe/nginx-operator-index-24644:v1
 
-
+8) create CatalogSource
 zhaoxia@xzha-mac test % cat catsrc.yaml 
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
@@ -132,8 +128,8 @@ spec:
 zhaoxia@xzha-mac test % oc get packagemanifests| grep Test
 nginx-operator-24644                                Test                   86s
 
+9) install operator
 zhaoxia@xzha-mac test % oc new-project test-1
-
 zhaoxia@xzha-mac test % oc apply -f og.yaml 
 operatorgroup.operators.coreos.com/og-single created
 zhaoxia@xzha-mac test % cat og.yaml 
@@ -166,7 +162,7 @@ NAME                               DISPLAY                            VERSION   
 elasticsearch-operator.5.4.0-146   OpenShift Elasticsearch Operator   5.4.0-146              Succeeded
 nginx-operator-24644.v0.0.1        nginx-operator-24644               0.0.1                  Succeeded
 
-
+10) install cr
 zhaoxia@xzha-mac test % cat cache_v1alpha1_nginx24644.yaml 
 apiVersion: cache.example.com/v1alpha1
 kind: Nginx24644
@@ -177,11 +173,7 @@ spec:
 
 zhaoxia@xzha-mac test % oc apply -f cache_v1alpha1_nginx24644.yaml 
 nginx24644.cache.example.com/nginx24644-sample created
-zhaoxia@xzha-mac test % oc get pod
-NAME                                                       READY   STATUS    RESTARTS   AGE
-nginx-operator-24644-controller-manager-59d758d85b-njsqt   2/2     Running   0          2m20s
-zhaoxia@xzha-mac test % oc get deploymnet
-^C
+
 zhaoxia@xzha-mac test % oc get deployment
 NAME                                      READY   UP-TO-DATE   AVAILABLE   AGE
 nginx-operator-24644-controller-manager   1/1     1            1           2m29s
