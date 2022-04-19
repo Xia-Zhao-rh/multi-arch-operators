@@ -1,0 +1,6 @@
+apiVersion: olm.example.com/v1alpha1
+kind: NginxOLM
+metadata:
+  name: nginxolm-sample
+spec:
+  # TODO(user): Add fields here
