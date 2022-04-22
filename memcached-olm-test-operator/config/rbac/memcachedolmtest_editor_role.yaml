@@ -1,0 +1,24 @@
+# permissions for end users to edit memcachedolmtests.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: memcachedolmtest-editor-role
+rules:
+- apiGroups:
+  - cache.example.com
+  resources:
+  - memcachedolmtests
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cache.example.com
+  resources:
+  - memcachedolmtests/status
+  verbs:
+  - get
