@@ -1,4 +1,5 @@
-# create bundle.Dockerfile
+# Generate multi-arch bundle image
+## create bundle.Dockerfile
 
 ```
 $ opm alpha bundle generate -d manifests -c stable -p kubeturbo -e stable 
@@ -8,7 +9,7 @@ INFO[0000] Building Dockerfile
 INFO[0000] Writing bundle.Dockerfile in /Users/zhaoxia/go/src/github.com/redhat-openshift-ecosystem/community-operators-prod/operators/kubeturbo/8.4.0 
 ```
 
-# Generate bundle image
+## Generate bundle image
 
 ```
 $ docker buildx build . --push --platform linux/amd64,linux/arm64 -f bundle.Dockerfile -t quay.io/olmqe/kubeturbo-bundle:v8.4.0
