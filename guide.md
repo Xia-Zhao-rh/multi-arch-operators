@@ -35,14 +35,14 @@ $ docker buildx build . --push --platform linux/amd64,linux/arm64 -f bundle.Dock
 
 ## Generate index image
 
-mkdir catalog
-opm generate dockerfile catalog
-mkdir catalog/kubeturbo-operator
-opm init kubeturbo-operator -c stable  -o yaml > catalog/kubeturbo-operator/index.yaml
-opm render quay.io/olmqe/kubeturbo-bundle:v8.4.0 -o yaml >> catalog/kubeturbo-operator/index.yaml
+```console
+$ mkdir catalog
+$ opm generate dockerfile catalog
+$ mkdir catalog/kubeturbo-operator
+$ opm init kubeturbo-operator -c stable  -o yaml > catalog/kubeturbo-operator/index.yaml
+$ opm render quay.io/olmqe/kubeturbo-bundle:v8.4.0 -o yaml >> catalog/kubeturbo-operator/index.yaml
 
-vi catalog/nginx-operator-24644/index.yaml
-```
+$ vi catalog/nginx-operator-24644/index.yaml
 ---
 defaultChannel: stable
 name: kubeturbo-operator
@@ -57,6 +57,6 @@ schema: olm.channel
 image: quay.io/olmqe/kubeturbo-bundle:21824-v8.5.0-wrong
 name: kubeturbo-operator.v8.5.0
 package: kubeturbo
-```
-docker buildx build . --push --platform linux/amd64,linux/arm64 -f catalog.Dockerfile -t quay.io/olmqe/quay.io/olmqe/kubeturbo-index:v1
 
+$ docker buildx build . --push --platform linux/amd64,linux/arm64 -f catalog.Dockerfile -t quay.io/olmqe/quay.io/olmqe/kubeturbo-index:v1
+```
