@@ -32,3 +32,31 @@ $ docker buildx build . --push --platform linux/amd64,linux/arm64 -f bundle.Dock
  => => pushing layers                                                                                                                                                                                2.5s
  => => pushing manifest for quay.io/olmqe/kubeturbo-bundle:v8.4.0@sha256:a2747cc67cc2a58b0810a1079654f34182deda2f804496fbc142ec9f87ce4264 
  ```   
+
+## Generate index image
+
+mkdir catalog
+opm generate dockerfile catalog
+mkdir catalog/kubeturbo-operator
+opm init kubeturbo-operator -c stable  -o yaml > catalog/kubeturbo-operator/index.yaml
+opm render quay.io/olmqe/kubeturbo-bundle:v8.4.0 -o yaml >> catalog/kubeturbo-operator/index.yaml
+
+vi catalog/nginx-operator-24644/index.yaml
+```
+---
+defaultChannel: stable
+name: kubeturbo-operator
+schema: olm.package
+---
+entries:
+- name: kubeturbo-operator.v8.5.0
+name: stable
+package: kubeturbo-operator
+schema: olm.channel
+---
+image: quay.io/olmqe/kubeturbo-bundle:21824-v8.5.0-wrong
+name: kubeturbo-operator.v8.5.0
+package: kubeturbo
+```
+docker buildx build . --push --platform linux/amd64,linux/arm64 -f catalog.Dockerfile -t quay.io/olmqe/quay.io/olmqe/kubeturbo-index:v1
+
