@@ -2,7 +2,7 @@
 ## create bundle.Dockerfile
 
 ```
-$ opm alpha bundle generate -d manifests -c stable -p kubeturbo -e stable 
+$ opm alpha bundle generate -d manifests -c stable -p kubeturbo-operator -e stable 
 INFO[0000] Building annotations.yaml                    
 INFO[0000] Writing annotations.yaml in /Users/zhaoxia/go/src/github.com/redhat-openshift-ecosystem/community-operators-prod/operators/kubeturbo/8.4.0/metadata 
 INFO[0000] Building Dockerfile                          
@@ -42,7 +42,7 @@ $ mkdir catalog/kubeturbo-operator
 $ opm init kubeturbo-operator -c stable  -o yaml > catalog/kubeturbo-operator/index.yaml
 $ opm render quay.io/olmqe/kubeturbo-bundle:v8.4.0 -o yaml >> catalog/kubeturbo-operator/index.yaml
 
-$ vi catalog/nginx-operator-24644/index.yaml
+$ vi catalog/kubeturbo-operator/index.yaml
 ---
 defaultChannel: stable
 name: kubeturbo-operator
@@ -58,5 +58,54 @@ image: quay.io/olmqe/kubeturbo-bundle:21824-v8.5.0-wrong
 name: kubeturbo-operator.v8.5.0
 package: kubeturbo
 
-$ docker buildx build . --push --platform linux/amd64,linux/arm64 -f catalog.Dockerfile -t quay.io/olmqe/quay.io/olmqe/kubeturbo-index:v1
+$ docker buildx build . --push --platform linux/amd64,linux/arm64 -f catalog.Dockerfile -t quay.io/olmqe/kubeturbo-index:v1
+```
+
+## install operator
+# create catalogsource
+
+```console
+$ oc new-project test-1
+
+$ oc apply -f og.yaml 
+operatorgroup.operators.coreos.com/og-single created
+$ cat og.yaml 
+kind: OperatorGroup
+apiVersion: operators.coreos.com/v1
+metadata:
+  name: og-single
+  namespace: test-1
+spec:
+  targetNamespaces:
+  - test-1
+  
+$ cat catsrc.yaml 
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: kubeturbo-index
+  namespace: test-1
+spec:
+  displayName: Test
+  publisher: OLM-QE
+  sourceType: grpc
+  image: quay.io/olmqe/kubeturbo-index:v1
+  updateStrategy:
+    registryPoll:
+      interval: 10m
+
+$ oc apply -f sub.yaml 
+subscription.operators.coreos.com/test created
+$ cat sub.yaml 
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: test
+  namespace: test-1
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: kubeturbo-operator
+  source: kubeturbo-index
+  sourceNamespace: test-1
 ```
