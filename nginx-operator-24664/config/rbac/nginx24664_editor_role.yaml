@@ -1,0 +1,24 @@
+# permissions for end users to edit nginx24664s.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nginx24664-editor-role
+rules:
+- apiGroups:
+  - cache.example.com
+  resources:
+  - nginx24664s
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cache.example.com
+  resources:
+  - nginx24664s/status
+  verbs:
+  - get
