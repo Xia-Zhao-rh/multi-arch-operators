@@ -1,0 +1,20 @@
+# permissions for end users to view nginxolms.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nginxolm-viewer-role
+rules:
+- apiGroups:
+  - olm.example.com
+  resources:
+  - nginxolms
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - olm.example.com
+  resources:
+  - nginxolms/status
+  verbs:
+  - get

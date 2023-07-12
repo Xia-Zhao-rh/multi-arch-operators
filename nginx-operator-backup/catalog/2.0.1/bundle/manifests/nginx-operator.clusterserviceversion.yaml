@@ -16,7 +16,7 @@ metadata:
     capabilities: Basic Install
     operators.operatorframework.io/builder: operator-sdk-v1.19.0+git
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
-  name: nginx-operator.v0.0.1
+  name: nginx-operator.v2.0.1
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -198,11 +198,11 @@ spec:
         serviceAccountName: nginx-operator-controller-manager
     strategy: deployment
   installModes:
-  - supported: false
+  - supported: true
     type: OwnNamespace
-  - supported: false
+  - supported: true
     type: SingleNamespace
-  - supported: false
+  - supported: true
     type: MultiNamespace
   - supported: true
     type: AllNamespaces
@@ -214,4 +214,5 @@ spec:
   maturity: alpha
   provider:
     name: redhat
-  version: 0.0.1
+  version: 2.0.1
+  replaces: nginx-operator.v1.0.2

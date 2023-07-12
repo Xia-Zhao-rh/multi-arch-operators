@@ -13,4 +13,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: quay.io/olmqe/nginxolm-operator-base
-  newTag: multi-arch
+  newTag: v1
