@@ -1,15 +1,18 @@
-1) init operator
+# init operator
+```
 zhaoxia@xzha-mac nginx-operator-24664 % operator-sdk init --plugins=ansible --domain example.com
 
 Writing kustomize manifests for you to edit...
 Next: define a resource with:
 $ operator-sdk create api
-
-2) create api
+```
+# create api
+```
 zhaoxia@xzha-mac nginx-operator-24664 % operator-sdk create api --group cache --version v1alpha1 --kind Nginx24664 --generate-role
 Writing kustomize manifests for you to edit..
-
-3) modify main.yml
+```
+# modify main.yml
+```
 zhaoxia@xzha-mac nginx-operator-24664 % cat roles/nginx24664/defaults/main.yml
 ---
 # defaults file for Memcached
@@ -38,12 +41,14 @@ zhaoxia@xzha-mac nginx-operator-24664 % cat roles/nginx24664/tasks/main.yml
             containers:
             - name: nginx
               image: "quay.io/olmqe/nginx-alpine:multi-arch"
+```
 
-
-4) build nginx operator image
+# build nginx operator image
+```
 zhaoxia@xzha-mac nginx-operator-24664 % docker buildx build . --push --platform linux/amd64,linux/arm64,linux/ppc64le,linux/s390x --tag quay.io/olmqe/nginx-operator-base:v24664
-
-5) create bundle
+```
+# create bundle
+```
 zhaoxia@xzha-mac nginx-operator-24664 % make bundle IMG=quay.io/olmqe/nginx-operator-base:v24664
 operator-sdk generate kustomize manifests -q
 
@@ -71,7 +76,9 @@ INFO[0000] Creating bundle/metadata/annotations.yaml
 INFO[0000] Bundle metadata generated suceessfully       
 operator-sdk bundle validate ./bundle
 INFO[0000] All validation tests have completed successfully 
-
+```
+# modify csv yaml file
+```
 zhaoxia@xzha-mac nginx-operator-24664 % vi bundle/manifests/nginx-operator-24664.clusterserviceversion.yaml
  installModes:
   - supported: true
@@ -82,11 +89,13 @@ zhaoxia@xzha-mac nginx-operator-24664 % vi bundle/manifests/nginx-operator-24664
     type: MultiNamespace
   - supported: true
     type: AllNamespaces
-
-6) create bundle image
+```
+# create bundle image
+```
 zhaoxia@xzha-mac nginx-operator-24664 % docker buildx build . --push --platform linux/amd64,linux/arm64,linux/ppc64le,linux/s390x -f bundle.Dockerfile -t quay.io/olmqe/nginx-operator-bundle-24664:v0.0.1
-
-7) create index image
+```
+# create index image
+```
 mkdir catalog
 opm generate dockerfile catalog
 mkdir catalog/nginx-operator-24664
@@ -108,4 +117,4 @@ image: quay.io/olmqe/nginx-operator-bundle-24664:v1.0
 name: nginx-operator-24664.v0.0.1
 
 zhaoxia@xzha-mac multi-arch-operators % docker buildx build . --push --platform linux/amd64,linux/arm64,linux/ppc64le,linux/s390x -f catalog.Dockerfile -t quay.io/olmqe/nginx-operator-index-24664:v1
-
+```
