@@ -90,7 +90,7 @@ zhaoxia@xzha-mac nginx-operator-24644 % docker buildx build . --push --platform 
 mkdir catalog
 opm generate dockerfile catalog
 mkdir catalog/nginx-operator-24644
-opm init nginx-operator-24664 -c alpha  -o yaml > catalog/nginx-operator-24644/index.yaml
+opm init nginx-operator-24644 -c alpha  -o yaml > catalog/nginx-operator-24644/index.yaml
 opm render quay.io/olmqe/nginx-operator-bundle-24644:v1.0 -o yaml >> catalog/nginx-operator-24644/index.yaml
 vi catalog/nginx-operator-24644/index.yaml
 ---
